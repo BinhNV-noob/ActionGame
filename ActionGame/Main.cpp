@@ -1,4 +1,5 @@
-﻿
+﻿//Main.cpp
+
 #include <windows.h>
 #include "resource.h"
 #include "Def.h"
@@ -145,41 +146,80 @@ LRESULT CALLBACK WndProc(HWND hWnd,
 /*	�����@�Z�b�g	*/
 void InitSet(void)
 {
-	// �v���C���[��񏉊��Z�b�g
+	// ===== PLAYER INIT =====
 	obj[IDX_PLAYER].id = ID_PLAYER;
-	obj[IDX_PLAYER].mode = 1;				// �A�N�V�����Ǘ��ԍ�
-	obj[IDX_PLAYER].dspf = 1;				// �O�F��\��	1�F�\��
-	obj[IDX_PLAYER].xsize = PLAYER_W;		// �w�T�C�Y
-	obj[IDX_PLAYER].ysize = PLAYER_H;		// �x�T�C�Y
-	obj[IDX_PLAYER].xposition = 200;// X���W
-	obj[IDX_PLAYER].yposition = 577 - (PLAYER_H / 2); // Y���W
-	obj[IDX_PLAYER].xspeed = 0;			// X�ړ���
-	obj[IDX_PLAYER].yspeed = 0;			// Y�ړ���
+	obj[IDX_PLAYER].mode = PLAYERMODE_WAIT;      // trạng thái ban đầu
+	obj[IDX_PLAYER].dspf = 1;                    // hiển thị ON
 
-	obj[IDX_PLAYER].xboff = 0;			// �w�I�t�Z�b�g
-	obj[IDX_PLAYER].yboff = 0;			// �x�I�t�Z�b�g
-	obj[IDX_PLAYER].xmoff = 0;			// �w�}�X�N
-	obj[IDX_PLAYER].ymoff = PLAYER_H;	// �x�}�X�N
-	obj[IDX_PLAYER].actioncnt = 0;;
-	obj[IDX_PLAYER].idx = BMP_PLAYER_R;	// �摜�ԍ�
+	obj[IDX_PLAYER].xsize = PLAYER_W;             // size sprite
+	obj[IDX_PLAYER].ysize = PLAYER_H;
 
-	// �v���C���[��񏉊��Z�b�g
+	obj[IDX_PLAYER].xposition = 200;
+	obj[IDX_PLAYER].yposition = 577 - (PLAYER_H / 2);
+
+	obj[IDX_PLAYER].xspeed = 0;
+	obj[IDX_PLAYER].yspeed = 0;
+
+	obj[IDX_PLAYER].xboff = 0;
+	obj[IDX_PLAYER].yboff = 0;
+	obj[IDX_PLAYER].xmoff = 0;
+	obj[IDX_PLAYER].ymoff = PLAYER_H;
+
+	obj[IDX_PLAYER].actioncnt = 0;
+	obj[IDX_PLAYER].idx = BMP_PLAYER_R;         // hướng mặt ban đầu
+
+	// ====== Player Animation Init (bắt buộc) ======
+	obj[IDX_PLAYER].animcnt = ANIM_WAIT_TIME;     // thời gian chờ mỗi frame
+	obj[IDX_PLAYER].animpatternnow = 0;                  // frame hiện tại
+	obj[IDX_PLAYER].animpattern = ANIM_WAIT_PATTERN;  // số frame của WAIT
+	obj[IDX_PLAYER].animloop = ANIM_WAIT_LOOP;     // có lặp hay không
+
+
+	// ===== ENEMY INIT =====
 	obj[IDX_ENEMY].id = ID_ENEMY;
-	obj[IDX_ENEMY].mode = 1;				// �A�N�V�����Ǘ��ԍ�
-	obj[IDX_ENEMY].dspf = 1;				// �O�F��\��	1�F�\��
-	obj[IDX_ENEMY].xsize = ENEMY_W;		// �w�T�C�Y
-	obj[IDX_ENEMY].ysize = ENEMY_H;		// �x�T�C�Y
-	obj[IDX_ENEMY].xposition = 400;// X���W
-	obj[IDX_ENEMY].yposition = 577 - (ENEMY_H / 2); // Y���W
-	obj[IDX_ENEMY].xspeed = 0;			// X�ړ���
-	obj[IDX_ENEMY].yspeed = 0;			// Y�ړ���
+	obj[IDX_ENEMY].mode = 1;
+	obj[IDX_ENEMY].dspf = 1;
 
-	obj[IDX_ENEMY].xboff = 0;			// �w�I�t�Z�b�g
-	obj[IDX_ENEMY].yboff = 0;			// �x�I�t�Z�b�g
-	obj[IDX_ENEMY].xmoff = 0;			// �w�}�X�N
-	obj[IDX_ENEMY].ymoff = ENEMY_H;	// �x�}�X�N
-	obj[IDX_ENEMY].actioncnt = 0;;
-	obj[IDX_ENEMY].idx = BMP_ENEMY_L;	// �摜�ԍ�
+	obj[IDX_ENEMY].xsize = ENEMY_W;
+	obj[IDX_ENEMY].ysize = ENEMY_H;
 
+	obj[IDX_ENEMY].xposition = 400;
+	obj[IDX_ENEMY].yposition = 577 - (ENEMY_H / 2);
+
+	obj[IDX_ENEMY].xspeed = 0;
+	obj[IDX_ENEMY].yspeed = 0;
+
+	obj[IDX_ENEMY].xboff = 0;
+	obj[IDX_ENEMY].yboff = 0;
+	obj[IDX_ENEMY].xmoff = 0;
+	obj[IDX_ENEMY].ymoff = ENEMY_H;
+
+	obj[IDX_ENEMY].actioncnt = 0;
+	obj[IDX_ENEMY].idx = BMP_ENEMY_L;
+
+	// (Enemy CHƯA được yêu cầu animation nên không set animcnt/pattern cho enemy)
+
+
+	// ===== RESET GAME COUNTER =====
 	gameCount = 0;
+}
+
+
+void KeyCheck(void)
+{
+	keystatus = 0;
+
+	if (GetKeyState(VK_UP) < 0)        // 0x01
+		keystatus |= KEYUP;
+	if (GetKeyState(VK_DOWN) < 0)      // 0x02
+		keystatus |= KEYDOWN;
+	if (GetKeyState(VK_LEFT) < 0)      // 0x04
+		keystatus |= KEYLEFT;
+	if (GetKeyState(VK_RIGHT) < 0)     // 0x08
+		keystatus |= KEYRIGHT;
+
+	if (GetKeyState(VK_SPACE) < 0)     // 0x10
+		keystatus |= KEYJUMP;
+	if (GetKeyState(VK_F1) < 0)        // 0x20
+		keystatus |= KEYATTACK;
 }

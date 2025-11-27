@@ -1,3 +1,5 @@
+//GameLoop.cpp
+
 
 #include <windows.h>
 #include "Def.h"
@@ -44,7 +46,7 @@ void GameLoop(void)
 		gmode = 3;
 		break;
 	case 3:
-		gmode = 6;
+		//gmode = 6;
 		break;
 	case 6:
 		gmode = 7;

@@ -1,4 +1,6 @@
-﻿#define MAXOBJ      1000    // số lượng object / sprite tối đa
+﻿//def.h
+
+#define MAXOBJ      1000    // số lượng object / sprite tối đa
 #define WINDOW_W    800     // chiều rộng cửa sổ
 #define WINDOW_H    640     // chiều cao cửa sổ
 
@@ -40,8 +42,8 @@
 #define BLOCK_W 32
 #define BLOCK_H 32
 
-#define X_LINE (WINDOW_W / BLOCK_W)
-#define Y_LINE (WINDOW_H/BLOCK_H)
+#define X_LINE (WINDOW_W / BLOCK_W) //25
+#define Y_LINE (WINDOW_H/BLOCK_H) //20
 
 
 
@@ -66,6 +68,24 @@
 #define PLAYERMODE_WAIT 1
 #define PLAYERMODE_WALK PLAYERMODE_WAIT + 1
 
+
+#define PLAYER_ATK_W 89
+
+#define ANIM_ATTACK_TIME     10
+#define ANIM_ATTACK_PATTERN   2
+#define ANIM_ATTACK_LOOP      0
+#define ANIM_ATTACK_OFFSET   12
+
+#define PLAYERMODE_ATTACK        PLAYERMODE_WALK + 1
+#define PLAYERMODE_ATTACK_AFTER  PLAYERMODE_ATTACK + 1
+
+#define PLAYER_ATTACK_OFFSET   968
+
+
+#define PLAYER_HIT_W  25   // = 50 / 2
+#define PLAYER_HIT_H  30   // = 60 / 2
+
+
 // cấu trúc dữ liệu cho 1 nhân vật / object
 struct CharData {
     int id;         // ID loại nhân vật (player, enemy, v.v.)
@@ -83,6 +103,11 @@ struct CharData {
     int ymoff;      // mask offset Y
     int actioncnt;  // bộ đếm frame / số tick cho hành động
     int idx;        // index hình / bitmap tương ứng (BMP_*)
+
+    int animcnt;        // その絵の状態を保持する時間 0になったら次の絵に移行
+    int animpatternnow; // 今何枚目の絵か 
+    int animpattern;    // そのアニメの絵の数
+    int animloop;       // そのアニメはループするタイプか 0:ループ無し 1:ループあり
 };
 
 typedef void (*TBLJP)(void); // con trỏ hàm: kiểu hàm không tham số, không trả về
@@ -94,4 +119,11 @@ void ActionLoop(void);// xử lý logic / cập nhật trạng thái object (di 
 
 void DrawLoop(void);// vẽ toàn bộ màn hình (background, player, enemy, UI, v.v.)
 void InitSet(void);// khởi tạo giá trị ban đầu (object, biến global, v.v.)
+
+void KeyCheck(void);
+void ActPlayer(void);
+void ActEnemy(void);
+int PlyEneHitcheck(void);
+
+int animManager(int anim_time, int next_mode, int dispflg);
 
