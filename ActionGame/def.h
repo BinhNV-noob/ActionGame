@@ -10,11 +10,19 @@
 
 //#define ID_      1       // (chưa dùng)
 
-#define PLAYER_W  80       // chiều rộng sprite nhân vật
-#define PLAYER_H  80       // chiều cao sprite nhân vật
+// ==========================
+// Kích thước sprite
+// ==========================
+// Bitmap PlayerL/PlayerR = 1148 x 160
+// → 1148 / 14 = 82 → mỗi frame rộng 82 pixel
+#define PLAYER_W   82      // FIX: chỉnh từ 80 → 82 cho khớp với bitmap
+#define PLAYER_H   80      // 160 / 2 = 80, giữ nguyên chiều cao
 
-#define ENEMY_W   80       // chiều rộng sprite enemy
-#define ENEMY_H   80       // chiều cao sprite enemy
+// Attack vẫn nằm trong grid 82px nên xsize phải là 82
+#define PLAYER_ATK_W  PLAYER_W  // FIX: dùng chung width với PLAYER_W để không lệch cột
+
+#define ENEMY_W   82      // FIX: chỉnh từ 80 → 82, enemy dùng chung sprite-grid
+#define ENEMY_H   80
 
 #define START_W   256      // chiều rộng nút/ảnh START
 #define START_H   40       // chiều cao nút/ảnh START
@@ -43,50 +51,65 @@
 #define BLOCK_H 32
 
 #define X_LINE (WINDOW_W / BLOCK_W) //25
-#define Y_LINE (WINDOW_H/BLOCK_H) //20
+#define Y_LINE (WINDOW_H/BLOCK_H)   //20
 
-
-
-#define ANIM_WAIT_TIME 10
+// ==========================
+// Anim player WAIT / WALK
+// ==========================
+#define ANIM_WAIT_TIME    10
 #define ANIM_WAIT_PATTERN 4
-#define ANIM_WAIT_LOOP 1
-#define ANIM_WAIT_OFFSET 0
+#define ANIM_WAIT_LOOP    1
+#define ANIM_WAIT_OFFSET  0   // frame idle bắt đầu (cột 0)
 
-#define ANIM_WALK_TIME 10
+#define ANIM_WALK_TIME    10
 #define ANIM_WALK_PATTERN 4
-#define ANIM_WALK_LOOP 1
-#define ANIM_WALK_OFFSET 4
+#define ANIM_WALK_LOOP    1
+#define ANIM_WALK_OFFSET  4   // frame walk bắt đầu (cột 4)
 
-#define KEYUP 0x01
-#define KEYDOWN 0x02
-#define KEYLEFT 0x04
-#define KEYRIGHT 0x08
-#define KEYJUMP 0x10
+// ==========================
+// Anim enemy walk
+// ==========================
+#define ENE_WALK_TIME      8          // tốc độ đổi frame enemy
+#define ENE_WALK_PATTERN   4          // số frame đi bộ enemy
+#define ENE_WALK_LOOP      1          // loop
+#define ENE_WALK_OFFSET    0          // frame đầu của enemy walk trong sprite sheet
+
+// ==========================
+// Key input
+// ==========================
+#define KEYUP     0x01
+#define KEYDOWN   0x02
+#define KEYLEFT   0x04
+#define KEYRIGHT  0x08
+#define KEYJUMP   0x10
 #define KEYATTACK 0x20
 
+// ==========================
+// Player mode
+// ==========================
+#define PLAYERMODE_WAIT           1
+#define PLAYERMODE_WALK   (PLAYERMODE_WAIT + 1)
 
-#define PLAYERMODE_WAIT 1
-#define PLAYERMODE_WALK PLAYERMODE_WAIT + 1
-
-
-#define PLAYER_ATK_W 89
-
-#define ANIM_ATTACK_TIME     10
+#define ANIM_ATTACK_TIME      3
 #define ANIM_ATTACK_PATTERN   2
 #define ANIM_ATTACK_LOOP      0
+
+// cột bắt đầu của anim attack trong sprite (0..13)
+// hiện đang dùng 12 (2 frame cuối). Giá trị này do bạn set từ sprite gốc.
 #define ANIM_ATTACK_OFFSET   12
+#define PLAYERMODE_ATTACK        (PLAYERMODE_WALK + 1)
+#define PLAYERMODE_ATTACK_AFTER  (PLAYERMODE_ATTACK + 1)
 
-#define PLAYERMODE_ATTACK        PLAYERMODE_WALK + 1
-#define PLAYERMODE_ATTACK_AFTER  PLAYERMODE_ATTACK + 1
+// giữ lại alias cũ nếu có dùng ở nơi khác
+#define PLAYER_ATTACK_OFFSET    ANIM_ATTACK_OFFSET
 
-#define PLAYER_ATTACK_OFFSET   968
-
-
+// hitbox vai/chest của player (chỉ dùng cho va chạm, không ảnh hưởng frame vẽ)
 #define PLAYER_HIT_W  25   // = 50 / 2
 #define PLAYER_HIT_H  30   // = 60 / 2
 
-
+// ==========================
 // cấu trúc dữ liệu cho 1 nhân vật / object
+// ==========================
 struct CharData {
     int id;         // ID loại nhân vật (player, enemy, v.v.)
     int mode;       // trạng thái / mode hành động
@@ -127,3 +150,7 @@ int PlyEneHitcheck(void);
 
 int animManager(int anim_time, int next_mode, int dispflg);
 
+
+
+
+//binfh

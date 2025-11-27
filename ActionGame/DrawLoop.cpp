@@ -4,6 +4,8 @@
 #include "Def.h"
 #include "Work.h"
 
+
+static const int g_breathTable[4] = { 0, 0, -1, 0 };
 void DrawLoop(void)
 {
     HDC hDC;
@@ -82,16 +84,37 @@ void DrawLoop(void)
         for (i = 0; i < MAXOBJ; i++) {
             if ((obj[i].id != 0) && (obj[i].mode != 0) && (obj[i].dspf != 0)) {
                 SelectObject(hDCWork, hBmpTbl[obj[i].idx]);
+
+                int drawX = (int)obj[i].xposition - (obj[i].xsize / 2);
+                int drawY = (int)obj[i].yposition - (obj[i].ysize / 2);
+
+                // nhịp thở cho player ở trạng thái WAIT
+                if (i == IDX_PLAYER && obj[i].mode == PLAYERMODE_WAIT) {
+                    int breathIndex = (gameCount / 6) % 4;   // số 6 chỉnh tốc độ thở
+                    drawY += g_breathTable[breathIndex];
+                }
+
                 BitBlt(hDCBack,
-                    (int)obj[i].xposition - (obj[i].xsize / 2),
-                    (int)obj[i].yposition - (obj[i].ysize / 2), obj[i].xsize, obj[i].ysize,
-                    hDCWork, obj[i].xmoff, obj[i].ymoff, SRCAND);
+                    drawX,
+                    drawY,
+                    obj[i].xsize, obj[i].ysize,
+                    hDCWork,
+                    obj[i].xmoff + obj[i].xsize * obj[i].animpatternnow,
+                    obj[i].ymoff,
+                    SRCAND);
+
                 BitBlt(hDCBack,
-                    (int)obj[i].xposition - (obj[i].xsize / 2),
-                    (int)obj[i].yposition - (obj[i].ysize / 2), obj[i].xsize, obj[i].ysize,
-                    hDCWork, obj[i].xboff, obj[i].yboff, SRCPAINT);
+                    drawX,
+                    drawY,
+                    obj[i].xsize, obj[i].ysize,
+                    hDCWork,
+                    obj[i].xboff + obj[i].xsize * obj[i].animpatternnow,
+                    obj[i].yboff,
+                    SRCPAINT);
             }
+
         }
+
         break;
     }
 

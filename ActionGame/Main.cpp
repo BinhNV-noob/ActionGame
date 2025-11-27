@@ -197,7 +197,17 @@ void InitSet(void)
     obj[IDX_ENEMY].actioncnt = 0;
     obj[IDX_ENEMY].idx       = BMP_ENEMY_L;
 
-    // (Enemy CHƯA được yêu cầu animation nên không set animcnt/pattern cho enemy)
+	//enemy đi bộ
+	obj[IDX_ENEMY].animcnt = ENE_WALK_TIME;
+	obj[IDX_ENEMY].animpatternnow = 0;
+	obj[IDX_ENEMY].animpattern = ENE_WALK_PATTERN;
+	obj[IDX_ENEMY].animloop = ENE_WALK_LOOP;
+
+	// enemy walk frame đầu tiên trong sprite sheet
+	obj[IDX_ENEMY].xboff = obj[IDX_ENEMY].xsize * ENE_WALK_OFFSET;
+	obj[IDX_ENEMY].xmoff = obj[IDX_ENEMY].xboff;
+
+
 
 
     // ===== RESET GAME COUNTER =====
