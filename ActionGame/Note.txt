@@ -1,0 +1,47 @@
+﻿
+
+Clone repo về máy:
+
+Git → Clone Repository
+Dán URL repo → chọn thư mục lưu → Clone
+
+Commit code:
+
+Mở View → Git Changes
+Thấy danh sách file thay đổi
+Nhập message commit
+Bấm Commit All (hoặc chọn file → Stage → Commit)
+
+
+Push lên remote (GitHub/GitLab)
+
+Sau khi commit:
+Nhấn Push trong Git Change
+Hoặc Git → Push
+Lần đầu có thể yêu cầu đăng nhập tài khoản GitHub
+
+
+Pull / Fetch code mới:
+
+Pull: kéo code mới về và merge
+Fetch: chỉ tải thông tin, chưa merge
+Vào Git → Pull hoặc nút ngay trong Git Changes
+
+Tạo/đổi nhánh (branch)
+Ở thanh trạng thái góc dưới:
+
+Click tên branch (vd: main)
+New Branch để tạo
+Chọn branch khác để switch
+
+
+
+Giải quyết xung đột (conflict)
+Khi Pull bị conflict:
+
+Visual Studio sẽ báo
+Click file → chọn
+Accept Current
+Accept Incoming
+Accept Both
+Save → Commit

@@ -37,6 +37,35 @@
 #define BMP_HOLE        8   // hố / lỗ
 #define BMP_BLOCK       9   // block / chướng ngại vật
 
+#define BLOCK_W 32
+#define BLOCK_H 32
+
+#define X_LINE (WINDOW_W / BLOCK_W)
+#define Y_LINE (WINDOW_H/BLOCK_H)
+
+
+
+#define ANIM_WAIT_TIME 10
+#define ANIM_WAIT_PATTERN 4
+#define ANIM_WAIT_LOOP 1
+#define ANIM_WAIT_OFFSET 0
+
+#define ANIM_WALK_TIME 10
+#define ANIM_WALK_PATTERN 4
+#define ANIM_WALK_LOOP 1
+#define ANIM_WALK_OFFSET 4
+
+#define KEYUP 0x01
+#define KEYDOWN 0x02
+#define KEYLEFT 0x04
+#define KEYRIGHT 0x08
+#define KEYJUMP 0x10
+#define KEYATTACK 0x20
+
+
+#define PLAYERMODE_WAIT 1
+#define PLAYERMODE_WALK PLAYERMODE_WAIT + 1
+
 // cấu trúc dữ liệu cho 1 nhân vật / object
 struct CharData {
     int id;         // ID loại nhân vật (player, enemy, v.v.)

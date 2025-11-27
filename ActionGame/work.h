@@ -8,3 +8,4 @@ extern CharData* pp;					// con trỏ trỏ tới object đang xử lý
 extern int gameCount;					// bộ đếm thời gian / frame trong game
 
 extern int         gmode;				// trạng thái game (title, play, gameover,...)
+extern char mapdata[Y_LINE][X_LINE];
