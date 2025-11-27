@@ -10,10 +10,10 @@
 
 //#define ID_      1       // (chưa dùng)
 
-#define PLAYER_W  82       // chiều rộng sprite nhân vật
+#define PLAYER_W  80       // chiều rộng sprite nhân vật
 #define PLAYER_H  80       // chiều cao sprite nhân vật
 
-#define ENEMY_W   82       // chiều rộng sprite enemy
+#define ENEMY_W   80       // chiều rộng sprite enemy
 #define ENEMY_H   80       // chiều cao sprite enemy
 
 #define START_W   256      // chiều rộng nút/ảnh START

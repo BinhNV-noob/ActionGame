@@ -146,62 +146,62 @@ LRESULT CALLBACK WndProc(HWND hWnd,
 /*	�����@�Z�b�g	*/
 void InitSet(void)
 {
-	// ===== PLAYER INIT =====
-	obj[IDX_PLAYER].id = ID_PLAYER;
-	obj[IDX_PLAYER].mode = PLAYERMODE_WAIT;      // trạng thái ban đầu
-	obj[IDX_PLAYER].dspf = 1;                    // hiển thị ON
+    // ===== PLAYER INIT =====
+    obj[IDX_PLAYER].id        = ID_PLAYER;
+    obj[IDX_PLAYER].mode      = PLAYERMODE_WAIT;      // trạng thái ban đầu
+    obj[IDX_PLAYER].dspf      = 1;                    // hiển thị ON
 
-	obj[IDX_PLAYER].xsize = PLAYER_W;             // size sprite
-	obj[IDX_PLAYER].ysize = PLAYER_H;
+    obj[IDX_PLAYER].xsize     = PLAYER_W;             // size sprite
+    obj[IDX_PLAYER].ysize     = PLAYER_H;
 
-	obj[IDX_PLAYER].xposition = 200;
-	obj[IDX_PLAYER].yposition = 577 - (PLAYER_H / 2);
+    obj[IDX_PLAYER].xposition = 200;
+    obj[IDX_PLAYER].yposition = 577 - (PLAYER_H / 2);
 
-	obj[IDX_PLAYER].xspeed = 0;
-	obj[IDX_PLAYER].yspeed = 0;
+    obj[IDX_PLAYER].xspeed    = 0;
+    obj[IDX_PLAYER].yspeed    = 0;
 
-	obj[IDX_PLAYER].xboff = 0;
-	obj[IDX_PLAYER].yboff = 0;
-	obj[IDX_PLAYER].xmoff = 0;
-	obj[IDX_PLAYER].ymoff = PLAYER_H;
+    obj[IDX_PLAYER].xboff     = 0;
+    obj[IDX_PLAYER].yboff     = 0;
+    obj[IDX_PLAYER].xmoff     = 0;
+    obj[IDX_PLAYER].ymoff     = PLAYER_H;
 
-	obj[IDX_PLAYER].actioncnt = 0;
-	obj[IDX_PLAYER].idx = BMP_PLAYER_R;         // hướng mặt ban đầu
+    obj[IDX_PLAYER].actioncnt = 0;
+    obj[IDX_PLAYER].idx       = BMP_PLAYER_R;         // hướng mặt ban đầu
 
-	// ====== Player Animation Init (bắt buộc) ======
-	obj[IDX_PLAYER].animcnt = ANIM_WAIT_TIME;     // thời gian chờ mỗi frame
-	obj[IDX_PLAYER].animpatternnow = 0;                  // frame hiện tại
-	obj[IDX_PLAYER].animpattern = ANIM_WAIT_PATTERN;  // số frame của WAIT
-	obj[IDX_PLAYER].animloop = ANIM_WAIT_LOOP;     // có lặp hay không
-
-
-	// ===== ENEMY INIT =====
-	obj[IDX_ENEMY].id = ID_ENEMY;
-	obj[IDX_ENEMY].mode = 1;
-	obj[IDX_ENEMY].dspf = 1;
-
-	obj[IDX_ENEMY].xsize = ENEMY_W;
-	obj[IDX_ENEMY].ysize = ENEMY_H;
-
-	obj[IDX_ENEMY].xposition = 400;
-	obj[IDX_ENEMY].yposition = 577 - (ENEMY_H / 2);
-
-	obj[IDX_ENEMY].xspeed = 0;
-	obj[IDX_ENEMY].yspeed = 0;
-
-	obj[IDX_ENEMY].xboff = 0;
-	obj[IDX_ENEMY].yboff = 0;
-	obj[IDX_ENEMY].xmoff = 0;
-	obj[IDX_ENEMY].ymoff = ENEMY_H;
-
-	obj[IDX_ENEMY].actioncnt = 0;
-	obj[IDX_ENEMY].idx = BMP_ENEMY_L;
-
-	// (Enemy CHƯA được yêu cầu animation nên không set animcnt/pattern cho enemy)
+    // ====== Player Animation Init (bắt buộc) ======
+    obj[IDX_PLAYER].animcnt        = ANIM_WAIT_TIME;     // thời gian chờ mỗi frame
+    obj[IDX_PLAYER].animpatternnow = 0;                  // frame hiện tại
+    obj[IDX_PLAYER].animpattern    = ANIM_WAIT_PATTERN;  // số frame của WAIT
+    obj[IDX_PLAYER].animloop       = ANIM_WAIT_LOOP;     // có lặp hay không
 
 
-	// ===== RESET GAME COUNTER =====
-	gameCount = 0;
+    // ===== ENEMY INIT =====
+    obj[IDX_ENEMY].id        = ID_ENEMY;
+    obj[IDX_ENEMY].mode      = 1;
+    obj[IDX_ENEMY].dspf      = 1;
+
+    obj[IDX_ENEMY].xsize     = ENEMY_W;
+    obj[IDX_ENEMY].ysize     = ENEMY_H;
+
+    obj[IDX_ENEMY].xposition = 400;
+    obj[IDX_ENEMY].yposition = 577 - (ENEMY_H / 2);
+
+    obj[IDX_ENEMY].xspeed    = 0;
+    obj[IDX_ENEMY].yspeed    = 0;
+
+    obj[IDX_ENEMY].xboff     = 0;
+    obj[IDX_ENEMY].yboff     = 0;
+    obj[IDX_ENEMY].xmoff     = 0;
+    obj[IDX_ENEMY].ymoff     = ENEMY_H;
+
+    obj[IDX_ENEMY].actioncnt = 0;
+    obj[IDX_ENEMY].idx       = BMP_ENEMY_L;
+
+    // (Enemy CHƯA được yêu cầu animation nên không set animcnt/pattern cho enemy)
+
+
+    // ===== RESET GAME COUNTER =====
+    gameCount = 0;
 }
 
 
