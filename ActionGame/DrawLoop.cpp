@@ -1,127 +1,76 @@
-﻿//DrawLoop.cpp
+﻿//drawloop.cpp
+
 
 #include <windows.h>
 #include "Def.h"
 #include "Work.h"
 
 
-static const int g_breathTable[4] = { 0, 0, -1, 0 };
 void DrawLoop(void)
 {
-    HDC hDC;
-    HDC hDCWork;
-    int i;
+	HDC	hDC;
+	HDC hDCWork;
+	int i;
 
-    // Lấy DC của cửa sổ chính
-    hDC = GetDC(hwnd);
+	hDC = GetDC(hwnd);
+	hDCWork = CreateCompatibleDC(hDC);
 
-    // Tạo DC ảo để vẽ bitmap
-    hDCWork = CreateCompatibleDC(hDC);
+	switch (gmode) {
+		// タイトル画面
+	case 1:
+		// 背景を描画
+		SelectObject(hDCWork, hBmpTbl[BMP_TITLE]);
+		BitBlt(hDCBack, 0, 0, WINDOW_W, WINDOW_H, hDCWork, 0, 0, SRCCOPY);
+		if ((gameCount % 20) < 10) {
+			SelectObject(hDCWork, hBmpTbl[BMP_START]);
+			BitBlt(hDCBack,
+				WINDOW_W / 2 - (START_W / 2),
+				WINDOW_H - START_H - 100,
+				START_W, START_H,
+				hDCWork, 0, 40, SRCAND);
+			BitBlt(hDCBack,
+				WINDOW_W / 2 - (START_W / 2),
+				WINDOW_H - START_H - 100,
+				START_W, START_H,
+				hDCWork, 0, 0, SRCPAINT);
+		}
+		break;
+	case 2:
+	case 3:
+		// 背景を描画
+		SelectObject(hDCWork, hBmpTbl[BMP_BG]);
+		BitBlt(hDCBack, 0, 0, WINDOW_W, WINDOW_H, hDCWork, 0, 0, SRCCOPY);
 
-    
-    // Phân nhánh xử lý vẽ theo chế độ màn hình (mode)
-    // gmode = 1 : Màn hình TITLE
-    // gmode = 2 : Màn hình GAME
-    
-    switch (gmode)
-    {
+		SelectObject(hDCWork, hBmpTbl[BMP_BLOCK]);
+		// ブロック表示
+		for (int y = 0; y < Y_LINE; y++) {
+			for (int x = 0; x < X_LINE; x++) {
+				if (mapdata[y][x] >= 1 && mapdata[y][x] <= 4) {
+					BitBlt(hDCBack,
+						x * BLOCK_W, y * BLOCK_H, BLOCK_W, BLOCK_H,
+						hDCWork, 0, 4 * BLOCK_H, SRCAND);
+					BitBlt(hDCBack,
+						x * BLOCK_W, y * BLOCK_H, BLOCK_W, BLOCK_H,
+						hDCWork, 0, (mapdata[y][x] - 1) * BLOCK_H, SRCPAINT);
+				}
+			}
+		}
+		for (i = 0; i < MAXOBJ; i++) {
+			if ((obj[i].id != 0) && (obj[i].mode != 0) && (obj[i].dspf != 0)) {
+				SelectObject(hDCWork, hBmpTbl[obj[i].idx]);
+				BitBlt(hDCBack,
+					(int)obj[i].xposition - (obj[i].xsize / 2),
+					(int)obj[i].yposition - (obj[i].ysize / 2), obj[i].xsize, obj[i].ysize,
+					hDCWork, obj[i].xmoff, obj[i].ymoff, SRCAND);
+				BitBlt(hDCBack,
+					(int)obj[i].xposition - (obj[i].xsize / 2),
+					(int)obj[i].yposition - (obj[i].ysize / 2), obj[i].xsize, obj[i].ysize,
+					hDCWork, obj[i].xboff, obj[i].yboff, SRCPAINT);
+			}
+		}
+		break;
+	}
 
-        
-        // CASE 1: MÀN HÌNH TITLE
-        
-    case 1:
-
-        // Vẽ nền Title
-        SelectObject(hDCWork, hBmpTbl[BMP_TITLE]);
-        BitBlt(hDCBack, 0, 0, WINDOW_W, WINDOW_H, hDCWork, 0, 0, SRCCOPY);
-
-        // Hiển thị chữ START nhấp nháy
-        if ((gameCount % 20) < 10)
-        {
-            SelectObject(hDCWork, hBmpTbl[BMP_START]);
-
-            // Vẽ phần mask (nửa dưới)
-            BitBlt(hDCBack,
-                WINDOW_W / 2 - (START_W / 2),
-                WINDOW_H - START_H - 100,
-                START_W, START_H,
-                hDCWork, 0, 40,
-                SRCAND);
-
-            // Vẽ phần hình ảnh thật (nửa trên)
-            BitBlt(hDCBack,
-                WINDOW_W / 2 - (START_W / 2),
-                WINDOW_H - START_H - 100,
-                START_W, START_H,
-                hDCWork, 0, 0,
-                SRCPAINT);
-        }
-        break;
-
-        
-        // CASE 2: MÀN HÌNH GAME
-        
-    case 2:
-    case 3: 
-        // 背景を描画
-        SelectObject(hDCWork, hBmpTbl[BMP_BG]);
-
-        BitBlt(hDCBack, 0, 0, WINDOW_W, WINDOW_H, hDCWork, 0, 0, SRCCOPY);
-        SelectObject(hDCWork, hBmpTbl[BMP_BLOCK]);
-        // ブロック表示
-        for (int y = 0; y < Y_LINE; y++) {
-            for (int x = 0; x < X_LINE; x++) {
-                if (mapdata[y][x] >= 1 && mapdata[y][x] <= 4) {
-                    BitBlt(hDCBack,
-                        x * BLOCK_W, y * BLOCK_H, BLOCK_W, BLOCK_H,
-                        hDCWork, 0, 4 * BLOCK_H, SRCAND);
-                    BitBlt(hDCBack,
-                        x * BLOCK_W, y * BLOCK_H, BLOCK_W, BLOCK_H,
-                        hDCWork, 0, (mapdata[y][x] - 1) * BLOCK_H, SRCPAINT);
-                }
-            }
-        }
-        for (i = 0; i < MAXOBJ; i++) {
-            if ((obj[i].id != 0) && (obj[i].mode != 0) && (obj[i].dspf != 0)) {
-                SelectObject(hDCWork, hBmpTbl[obj[i].idx]);
-
-                int drawX = (int)obj[i].xposition - (obj[i].xsize / 2);
-                int drawY = (int)obj[i].yposition - (obj[i].ysize / 2);
-
-                // nhịp thở cho player ở trạng thái WAIT
-                if (i == IDX_PLAYER && obj[i].mode == PLAYERMODE_WAIT) {
-                    int breathIndex = (gameCount / 6) % 4;   // số 6 chỉnh tốc độ thở
-                    drawY += g_breathTable[breathIndex];
-                }
-
-                BitBlt(hDCBack,
-                    drawX,
-                    drawY,
-                    obj[i].xsize, obj[i].ysize,
-                    hDCWork,
-                    obj[i].xmoff + obj[i].xsize * obj[i].animpatternnow,
-                    obj[i].ymoff,
-                    SRCAND);
-
-                BitBlt(hDCBack,
-                    drawX,
-                    drawY,
-                    obj[i].xsize, obj[i].ysize,
-                    hDCWork,
-                    obj[i].xboff + obj[i].xsize * obj[i].animpatternnow,
-                    obj[i].yboff,
-                    SRCPAINT);
-            }
-
-        }
-
-        break;
-    }
-
-
-    //Xóa DC ảo
-    DeleteDC(hDCWork);
-
-    //Trả lại DC cửa sổ
-    ReleaseDC(hwnd, hDC);
+	DeleteDC(hDCWork);
+	ReleaseDC(hwnd, hDC);
 }

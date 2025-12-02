@@ -1,156 +1,125 @@
 ﻿//def.h
 
-#define MAXOBJ      1000    // số lượng object / sprite tối đa
-#define WINDOW_W    800     // chiều rộng cửa sổ
-#define WINDOW_H    640     // chiều cao cửa sổ
+#define	MAXOBJ		1000	// スプライトの数
+#define WINDOW_W	800		// ウィンドウの幅
+#define WINDOW_H	640		// ウィンドウの高さ
 
-//#define GM_      0       // (chưa dùng)
+//#define GM_		0		// 
 
-//#define O_       0       // (chưa dùng)
+//#define O_		0		// 
 
-//#define ID_      1       // (chưa dùng)
+//#define ID_		1		// 
 
-// ==========================
-// Kích thước sprite
-// ==========================
-// Bitmap PlayerL/PlayerR = 1148 x 160
-// → 1148 / 14 = 82 → mỗi frame rộng 82 pixel
-#define PLAYER_W   82      // FIX: chỉnh từ 80 → 82 cho khớp với bitmap
-#define PLAYER_H   80      // 160 / 2 = 80, giữ nguyên chiều cao
+#define PLAYER_W 80
+#define PLAYER_H 80
 
-// Attack vẫn nằm trong grid 82px nên xsize phải là 82
-#define PLAYER_ATK_W  PLAYER_W  // FIX: dùng chung width với PLAYER_W để không lệch cột
+#define ENEMY_W 82
+#define ENEMY_H 80
 
-#define ENEMY_W   82      // FIX: chỉnh từ 80 → 82, enemy dùng chung sprite-grid
-#define ENEMY_H   80
+#define START_W 256
+#define START_H 40
 
-#define START_W   256      // chiều rộng nút/ảnh START
-#define START_H   40       // chiều cao nút/ảnh START
+// ID管理
+#define ID_PLAYER 1
+#define ID_ENEMY  ID_PLAYER + 1
 
-// quản lý ID (phân loại loại nhân vật / object)
-#define ID_PLAYER  1
-#define ID_ENEMY   ID_PLAYER + 1
+//配列のindex管理
+#define IDX_PLAYER 1
+#define IDX_ENEMY  IDX_PLAYER + 1
 
-// quản lý index trong mảng (chỉ số trong table / mảng CharData)
-#define IDX_PLAYER  1
-#define IDX_ENEMY   IDX_PLAYER + 1
-
-// ID bitmap (index trong mảng bitmap)
-#define BMP_BG          0   // background
-#define BMP_PLAYER_L    1   // nhân vật quay trái
-#define BMP_PLAYER_R    2   // nhân vật quay phải
-#define BMP_ENEMY_L     3   // enemy quay trái
-#define BMP_ENEMY_R     4   // enemy quay phải
-#define BMP_TITLE       5   // màn hình title
-#define BMP_START       6   // nút / chữ START
-#define BMP_SCORE       7   // hiển thị SCORE
-#define BMP_HOLE        8   // hố / lỗ
-#define BMP_BLOCK       9   // block / chướng ngại vật
+#define BMP_BG			0
+#define BMP_PLAYER_L	1
+#define BMP_PLAYER_R	2
+#define BMP_ENEMY_L		3
+#define BMP_ENEMY_R		4
+#define BMP_TITLE		5
+#define BMP_START		6
+#define BMP_SCORE		7
+#define BMP_HOLE		8
+#define BMP_BLOCK		9
 
 #define BLOCK_W 32
 #define BLOCK_H 32
+#define X_LINE (WINDOW_W / BLOCK_W)
+#define Y_LINE (WINDOW_H / BLOCK_H)
 
-#define X_LINE (WINDOW_W / BLOCK_W) //25
-#define Y_LINE (WINDOW_H/BLOCK_H)   //20
+#define PLAYER_ATK_W 89
+#define ANIM_ATTACK_TIME 10
+#define ANIM_ATTACK_PATTERN 2
+#define ANIM_ATTACK_LOOP 0
+#define ANIM_ATTACK_OFFSET 12
+#define PLAYERMODE_ATTACK PLAYERMODE_WALK + 1
+#define PLAYERMODE_ATTACK_AFTER PLAYERMODE_ATTACK + 1
+#define PLAYER_ATTACK_OFFSET 968
 
-// ==========================
-// Anim player WAIT / WALK
-// ==========================
-#define ANIM_WAIT_TIME    10
+#define ANIM_WAIT_TIME 10
 #define ANIM_WAIT_PATTERN 4
-#define ANIM_WAIT_LOOP    1
-#define ANIM_WAIT_OFFSET  0   // frame idle bắt đầu (cột 0)
+#define ANIM_WAIT_LOOP 1
+#define ANIM_WAIT_OFFSET 0 
 
-#define ANIM_WALK_TIME    10
+#define ANIM_WALK_TIME 10
 #define ANIM_WALK_PATTERN 4
-#define ANIM_WALK_LOOP    1
-#define ANIM_WALK_OFFSET  4   // frame walk bắt đầu (cột 4)
+#define ANIM_WALK_LOOP 1
+#define ANIM_WALK_OFFSET 4
 
-// ==========================
-// Anim enemy walk
-// ==========================
-#define ENE_WALK_TIME      8          // tốc độ đổi frame enemy
-#define ENE_WALK_PATTERN   4          // số frame đi bộ enemy
-#define ENE_WALK_LOOP      1          // loop
-#define ENE_WALK_OFFSET    0          // frame đầu của enemy walk trong sprite sheet
-
-// ==========================
-// Key input
-// ==========================
-#define KEYUP     0x01
-#define KEYDOWN   0x02
-#define KEYLEFT   0x04
-#define KEYRIGHT  0x08
-#define KEYJUMP   0x10
+#define KEYUP 0x01
+#define KEYDOWN 0x02
+#define KEYLEFT 0x04
+#define KEYRIGHT 0x08
+#define KEYJUMP 0x10
 #define KEYATTACK 0x20
+#define PLAYERMODE_WAIT 1
+#define PLAYERMODE_WALK PLAYERMODE_WAIT + 1
+#define PLAYER_HIT_W 25
+#define PLAYER_HIT_H 30
 
-// ==========================
-// Player mode
-// ==========================
-#define PLAYERMODE_WAIT           1
-#define PLAYERMODE_WALK   (PLAYERMODE_WAIT + 1)
+#define ANIM_FALL_TIME 1
+#define ANIM_FALL_PATTERN 1
+#define ANIM_FALL_LOOP 1
+#define ANIM_FALL_OFFSET 9
+#define PLAYERMODE_FALL PLAYERMODE_ATTACK_AFTER + 1
 
-#define ANIM_ATTACK_TIME      3
-#define ANIM_ATTACK_PATTERN   2
-#define ANIM_ATTACK_LOOP      0
+#define ANIM_JUMP_TIME 1
+#define ANIM_JUMP_PATTERN 1
+#define ANIM_JUMP_LOOP 1
+#define ANIM_JUMP_OFFSET 8
+#define PLAYERMODE_JUMP PLAYERMODE_FALL + 1
+#define DIR_LEFT 0 // 左向き
+#define DIR_RIGHT 1 // 右向き
+#define BMP_PLAYER_BASE 1
+#define BMP_ENEMY_BASE 3
 
-// cột bắt đầu của anim attack trong sprite (0..13)
-// hiện đang dùng 12 (2 frame cuối). Giá trị này do bạn set từ sprite gốc.
-#define ANIM_ATTACK_OFFSET   12
-#define PLAYERMODE_ATTACK        (PLAYERMODE_WALK + 1)
-#define PLAYERMODE_ATTACK_AFTER  (PLAYERMODE_ATTACK + 1)
-
-// giữ lại alias cũ nếu có dùng ở nơi khác
-#define PLAYER_ATTACK_OFFSET    ANIM_ATTACK_OFFSET
-
-// hitbox vai/chest của player (chỉ dùng cho va chạm, không ảnh hưởng frame vẽ)
-#define PLAYER_HIT_W  25   // = 50 / 2
-#define PLAYER_HIT_H  30   // = 60 / 2
-
-// ==========================
-// cấu trúc dữ liệu cho 1 nhân vật / object
-// ==========================
 struct CharData {
-    int id;         // ID loại nhân vật (player, enemy, v.v.)
-    int mode;       // trạng thái / mode hành động
-    BOOL dspf;      // cờ hiển thị: 1 = vẽ, 0 = không vẽ
-    int xposition;  // vị trí X (tọa độ trên màn hình / world)
-    int yposition;  // vị trí Y
-    double xspeed;  // vận tốc theo trục X
-    double yspeed;  // vận tốc theo trục Y
-    int xsize;      // kích thước theo chiều ngang (hitbox / sprite)
-    int ysize;      // kích thước theo chiều dọc
-    int xboff;      // offset vẽ theo X (lệch so với tâm / gốc)
-    int yboff;      // offset vẽ theo Y
-    int xmoff;      // mask offset X (nếu dùng mask bitmap)
-    int ymoff;      // mask offset Y
-    int actioncnt;  // bộ đếm frame / số tick cho hành động
-    int idx;        // index hình / bitmap tương ứng (BMP_*)
-
-    int animcnt;        // その絵の状態を保持する時間 0になったら次の絵に移行
-    int animpatternnow; // 今何枚目の絵か 
-    int animpattern;    // そのアニメの絵の数
-    int animloop;       // そのアニメはループするタイプか 0:ループ無し 1:ループあり
+	int id;			// 識別番号
+	int mode;			// アクション管理番号
+	BOOL dspf;			// ０：非表示	1：表示
+	int xposition;			// スクリーンＸ座標
+	int yposition;			// スクリーンＹ座標
+	double xspeed;
+	double yspeed;
+	int xsize;			// Ｘサイズ
+	int ysize;			// Ｙサイズ
+	int xboff;			// Ｘオフセット
+	int yboff;			// Ｙオフセット
+	int xmoff;			// Ｘマスク
+	int ymoff;			// Ｙマスク
+	int actioncnt;
+	int idx;			// 画像番号
+	int animcnt;
+	int animpatternnow;
+	int animpattern;
+	int animloop;
+	int direction;
 };
+typedef void (*TBLJP)(void);
 
-typedef void (*TBLJP)(void); // con trỏ hàm: kiểu hàm không tham số, không trả về
-
-
-LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);// prototype hàm window procedure
-void GameLoop(void);// loop chính của game (gọi liên tục mỗi frame)
-void ActionLoop(void);// xử lý logic / cập nhật trạng thái object (di chuyển, va chạm, v.v.)
-
-void DrawLoop(void);// vẽ toàn bộ màn hình (background, player, enemy, UI, v.v.)
-void InitSet(void);// khởi tạo giá trị ban đầu (object, biến global, v.v.)
-
+LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
+void GameLoop(void);
+void ActionLoop(void);
+void DrawLoop(void);
 void KeyCheck(void);
+void InitSet(void);
+
 void ActPlayer(void);
-void ActEnemy(void);
-int PlyEneHitcheck(void);
-
-int animManager(int anim_time, int next_mode, int dispflg);
-
-
-
-
-//binfh
+int chkFix(void);
+int chkRoof(void);

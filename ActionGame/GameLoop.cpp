@@ -1,4 +1,4 @@
-//GameLoop.cpp
+﻿//GameLoop.cpp
 
 
 #include <windows.h>
@@ -27,19 +27,16 @@ TBLJP GameJpTbl[] = {
 	GameNull ,				//  15 : 
 };
 
-void GameLoop(void)
-{
-	switch (gmode)
-	{
+void GameLoop(void) {
+	switch (gmode) {
 	case 0:
 		gmode = 1;
 		break;
+		// タイトル画面(スペースを押されたら)
 	case 1:
-	
 		if (GetKeyState(VK_SPACE) < 0) {
 			gmode = 2;
 		}
-	
 		break;
 	case 2:
 		InitSet();
@@ -74,4 +71,3 @@ void GameLoop(void)
 		break;
 	}
 }
-

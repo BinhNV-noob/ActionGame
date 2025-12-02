@@ -1,11 +1,10 @@
-﻿//Main.cpp
-
-#include <windows.h>
+﻿#include <windows.h>
 #include "resource.h"
 #include "Def.h"
 #include "Work.h"
-
-
+int keystatus = 0;
+/* ----------------------------------------------------	*/
+/*					エントリポイント					*/
 int WINAPI WinMain(
 	_In_ HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
@@ -36,7 +35,7 @@ int WINAPI WinMain(
 	RegisterClassEx(&wcex);
 
 	hWnd = CreateWindow(wcex.lpszClassName,
-		TEXT("Action Game"),
+		TEXT("ゲーム"),
 		WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT,
 		CW_USEDEFAULT,
@@ -63,7 +62,7 @@ int WINAPI WinMain(
 }
 
 /* ----------------------------------------------------	*/
-/*					�E�B���h�E�v���V�[�W��				*/
+/*					ウィンドウプロシージャ				*/
 LRESULT CALLBACK WndProc(HWND hWnd,
 	UINT message,
 	WPARAM wParam,
@@ -78,7 +77,7 @@ LRESULT CALLBACK WndProc(HWND hWnd,
 	switch (message)
 	{
 	case WM_CREATE:
-		hInst = (HINSTANCE)GetWindowLong(hWnd, GWL_HINSTANCE);
+		hInst = (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE);
 
 		hBmpTbl[BMP_BG] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_BG));
 		hBmpTbl[BMP_PLAYER_L] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_PLAYER_L));
@@ -125,12 +124,12 @@ LRESULT CALLBACK WndProc(HWND hWnd,
 		break;
 
 	case WM_DESTROY:
-		DeleteDC(hDCBack);			//����ʂ̍폜
-		//�r�b�g�}�b�v�̍폜
+		DeleteDC(hDCBack);			//裏画面の削除
+		//ビットマップの削除
 //			DeleteObject( hBmpTbl[0] ) ;
 //			DeleteObject( hBmpTbl[1] ) ;
 
-		KillTimer(hWnd, 1);			//�^�C�}�̍폜
+		KillTimer(hWnd, 1);			//タイマの削除
 		PostQuitMessage(0);
 		break;
 	default:
@@ -141,95 +140,81 @@ LRESULT CALLBACK WndProc(HWND hWnd,
 }
 
 /* -------------------------------------------- */
-/*						�֐�					*/
+/*						関数					*/
 /* -------------------------------------------- */
-/*	�����@�Z�b�g	*/
+/*	初期　セット	*/
 void InitSet(void)
 {
-    // ===== PLAYER INIT =====
-    obj[IDX_PLAYER].id        = ID_PLAYER;
-    obj[IDX_PLAYER].mode      = PLAYERMODE_WAIT;      // trạng thái ban đầu
-    obj[IDX_PLAYER].dspf      = 1;                    // hiển thị ON
+	// プレイヤー情報初期セット
+	obj[IDX_PLAYER].id = ID_PLAYER;
+	obj[IDX_PLAYER].mode = 1;				// アクション管理番号
+	obj[IDX_PLAYER].dspf = 1;				// ０：非表示	1：表示
+	obj[IDX_PLAYER].xsize = PLAYER_W;		// Ｘサイズ
+	obj[IDX_PLAYER].ysize = PLAYER_H;		// Ｙサイズ
+	obj[IDX_PLAYER].xposition = 170;// X座標
+	//obj[IDX_PLAYER].yposition = 427 - (PLAYER_H / 2); // Y座標
+	// tự tìm block mặt đất gần nhất theo mapdata
+	int px = obj[IDX_PLAYER].xposition / BLOCK_W;
 
-    obj[IDX_PLAYER].xsize     = PLAYER_W;             // size sprite
-    obj[IDX_PLAYER].ysize     = PLAYER_H;
+	int groundY = 0;
+	for (int y = 0; y < Y_LINE; y++) {
+		if (mapdata[y][px] >= 1 && mapdata[y][px] <= 4) {
+			groundY = y * BLOCK_H;
+			break;
+		}
+	}
+	// nếu KHÔNG tìm thấy block → đặt player lên dòng cuối cùng của map
+	if (groundY == -1) {
+		groundY = (Y_LINE - 1) * BLOCK_H;
+	}
+	obj[IDX_PLAYER].yposition = groundY - (PLAYER_H / 2);
 
-    obj[IDX_PLAYER].xposition = 200;
-    obj[IDX_PLAYER].yposition = 577 - (PLAYER_H / 2);
+	obj[IDX_PLAYER].xspeed = 0;			// X移動量
+	obj[IDX_PLAYER].yspeed = 0;			// Y移動量
 
-    obj[IDX_PLAYER].xspeed    = 0;
-    obj[IDX_PLAYER].yspeed    = 0;
+	obj[IDX_PLAYER].xboff = 0;			// Ｘオフセット
+	obj[IDX_PLAYER].yboff = 0;			// Ｙオフセット
+	obj[IDX_PLAYER].xmoff = 0;			// Ｘマスク
+	obj[IDX_PLAYER].ymoff = PLAYER_H;	// Ｙマスク
+	obj[IDX_PLAYER].actioncnt = 0;
+	obj[IDX_PLAYER].idx = BMP_PLAYER_R;	// 画像番号
 
-    obj[IDX_PLAYER].xboff     = 0;
-    obj[IDX_PLAYER].yboff     = 0;
-    obj[IDX_PLAYER].xmoff     = 0;
-    obj[IDX_PLAYER].ymoff     = PLAYER_H;
+	// プレイヤー情報初期セット
+	obj[IDX_ENEMY].id = ID_ENEMY;
+	obj[IDX_ENEMY].mode = 1;				// アクション管理番号
+	obj[IDX_ENEMY].dspf = 1;				// ０：非表示	1：表示
+	obj[IDX_ENEMY].xsize = ENEMY_W;		// Ｘサイズ
+	obj[IDX_ENEMY].ysize = ENEMY_H;		// Ｙサイズ
+	obj[IDX_ENEMY].xposition = 400;// X座標
+	obj[IDX_ENEMY].yposition = 577 - (ENEMY_H / 2); // Y座標
+	obj[IDX_ENEMY].xspeed = 0;			// X移動量
+	obj[IDX_ENEMY].yspeed = 0;			// Y移動量
 
-    obj[IDX_PLAYER].actioncnt = 0;
-    obj[IDX_PLAYER].idx       = BMP_PLAYER_R;         // hướng mặt ban đầu
+	obj[IDX_ENEMY].xboff = 0;			// Ｘオフセット
+	obj[IDX_ENEMY].yboff = 0;			// Ｙオフセット
+	obj[IDX_ENEMY].xmoff = 0;			// Ｘマスク
+	obj[IDX_ENEMY].ymoff = ENEMY_H;	// Ｙマスク
+	obj[IDX_ENEMY].actioncnt = 0;
+	obj[IDX_ENEMY].idx = BMP_ENEMY_L;	// 画像番号
 
-    // ====== Player Animation Init (bắt buộc) ======
-    obj[IDX_PLAYER].animcnt        = ANIM_WAIT_TIME;     // thời gian chờ mỗi frame
-    obj[IDX_PLAYER].animpatternnow = 0;                  // frame hiện tại
-    obj[IDX_PLAYER].animpattern    = ANIM_WAIT_PATTERN;  // số frame của WAIT
-    obj[IDX_PLAYER].animloop       = ANIM_WAIT_LOOP;     // có lặp hay không
-
-
-    // ===== ENEMY INIT =====
-    obj[IDX_ENEMY].id        = ID_ENEMY;
-    obj[IDX_ENEMY].mode      = 1;
-    obj[IDX_ENEMY].dspf      = 1;
-
-    obj[IDX_ENEMY].xsize     = ENEMY_W;
-    obj[IDX_ENEMY].ysize     = ENEMY_H;
-
-    obj[IDX_ENEMY].xposition = 400;
-    obj[IDX_ENEMY].yposition = 577 - (ENEMY_H / 2);
-
-    obj[IDX_ENEMY].xspeed    = 0;
-    obj[IDX_ENEMY].yspeed    = 0;
-
-    obj[IDX_ENEMY].xboff     = 0;
-    obj[IDX_ENEMY].yboff     = 0;
-    obj[IDX_ENEMY].xmoff     = 0;
-    obj[IDX_ENEMY].ymoff     = ENEMY_H;
-
-    obj[IDX_ENEMY].actioncnt = 0;
-    obj[IDX_ENEMY].idx       = BMP_ENEMY_L;
-
-	//enemy đi bộ
-	obj[IDX_ENEMY].animcnt = ENE_WALK_TIME;
-	obj[IDX_ENEMY].animpatternnow = 0;
-	obj[IDX_ENEMY].animpattern = ENE_WALK_PATTERN;
-	obj[IDX_ENEMY].animloop = ENE_WALK_LOOP;
-
-	// enemy walk frame đầu tiên trong sprite sheet
-	obj[IDX_ENEMY].xboff = obj[IDX_ENEMY].xsize * ENE_WALK_OFFSET;
-	obj[IDX_ENEMY].xmoff = obj[IDX_ENEMY].xboff;
-
-
-
-
-    // ===== RESET GAME COUNTER =====
-    gameCount = 0;
+	gameCount = 0;
 }
-
-
-void KeyCheck(void)
-{
+/* ------------------------------------ */
+/* キー状態チェック */
+/* 0 0 0 0 - 0 0 0 0 */
+/* ------------------------------------ */
+void KeyCheck(void) {
 	keystatus = 0;
-
-	if (GetKeyState(VK_UP) < 0)        // 0x01
+	if (GetKeyState(VK_UP) < 0) // 0x01
 		keystatus |= KEYUP;
-	if (GetKeyState(VK_DOWN) < 0)      // 0x02
+	if (GetKeyState(VK_DOWN) < 0) // 0x02
 		keystatus |= KEYDOWN;
-	if (GetKeyState(VK_LEFT) < 0)      // 0x04
+	if (GetKeyState(VK_LEFT) < 0) // 0x04
 		keystatus |= KEYLEFT;
-	if (GetKeyState(VK_RIGHT) < 0)     // 0x08
+	if (GetKeyState(VK_RIGHT) < 0) // 0x08
 		keystatus |= KEYRIGHT;
-
-	if (GetKeyState(VK_SPACE) < 0)     // 0x10
+	if (GetKeyState(VK_SPACE) < 0) // 0x10
 		keystatus |= KEYJUMP;
-	if (GetKeyState(VK_F1) < 0)        // 0x20
+	if (GetKeyState(VK_F1) < 0) // 0x20
 		keystatus |= KEYATTACK;
 }

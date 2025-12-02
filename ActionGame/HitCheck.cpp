@@ -1,11 +1,12 @@
-//HitCheck.cpp
+ï»¿//HitCheck.cpp
+
 
 #include <windows.h>
 #include "def.h"
 #include "work.h"
 
 /* ********************************************	*/
-/*			ƒvƒŒƒCƒ„[@‚u‚r@“G				*/
+/*			ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã€€ï¼¶ï¼³ã€€æ•µ				*/
 /*
 	if( 0 != PlyEne( 8,16,8,16 ) )
 	{
@@ -38,4 +39,24 @@ int PlyEneHitcheck(void)
 		}
 	}
 	return hf;
+}
+int chkFix(void) {
+	int xidx, yidx;
+	int result = 0;
+	xidx = pp->xposition / BLOCK_W;
+	yidx = (pp->yposition + (pp->ysize / 2) + 5) / BLOCK_H;
+	if (mapdata[yidx][xidx] >= 1 && mapdata[yidx][xidx] <= 4) {
+		result = yidx * BLOCK_H;
+	}
+	return result;
+}
+int chkRoof(void) {
+	int xidx, yidx;
+	int result = 0;
+	xidx = pp->xposition / BLOCK_W;
+	yidx = (pp->yposition - (pp->ysize / 2) - 5) / BLOCK_H;
+	if (mapdata[yidx][xidx] >= 1 && mapdata[yidx][xidx] <= 4) {
+		result = 1;
+	}
+	return result;
 }
