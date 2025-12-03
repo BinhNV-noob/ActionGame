@@ -145,9 +145,11 @@
   <ItemGroup>
     <ClCompile Include="ActionLoop.cpp" />
     <ClCompile Include="DrawLoop.cpp" />
+    <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="GameLoop.cpp" />
     <ClCompile Include="HitCheck.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Player.cpp" />
     <ClCompile Include="Work.cpp" />
   </ItemGroup>
   <ItemGroup>

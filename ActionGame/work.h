@@ -11,3 +11,6 @@ extern int gameCount;
 extern int gmode;					// ゲーム管理モード
 extern int fixYposition;
 extern int keystatus;
+extern int enemyCount;
+extern int killCount;
+extern int hitCount;

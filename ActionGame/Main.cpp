@@ -2,6 +2,7 @@
 #include "resource.h"
 #include "Def.h"
 #include "Work.h"
+#include <time.h>
 int keystatus = 0;
 /* ----------------------------------------------------	*/
 /*					エントリポイント					*/
@@ -11,6 +12,7 @@ int WINAPI WinMain(
 	_In_ LPSTR lpCmdLine,
 	_In_ int nShowCmd)
 {
+	srand((unsigned)time(NULL));
 	WNDCLASSEX wcex;
 	HWND hWnd;
 	MSG msg;
@@ -35,7 +37,7 @@ int WINAPI WinMain(
 	RegisterClassEx(&wcex);
 
 	hWnd = CreateWindow(wcex.lpszClassName,
-		TEXT("ゲーム"),
+		TEXT("ACTION GAME"),
 		WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT,
 		CW_USEDEFAULT,
@@ -96,8 +98,7 @@ LRESULT CALLBACK WndProc(HWND hWnd,
 		SelectObject(hDCBack, hBitmap);
 		DeleteObject(hBitmap);
 		ReleaseDC(hWnd, hDC);
-
-		SetTimer(hWnd, 1, 50, NULL);
+		SetTimer(hWnd, 1, 16, NULL);
 		break;
 
 	case WM_TIMER:
@@ -105,6 +106,7 @@ LRESULT CALLBACK WndProc(HWND hWnd,
 		{
 			tmf++;
 			GameLoop();
+			EnemySet();
 			ActionLoop();
 			DrawLoop();
 			InvalidateRect(hWnd, NULL, FALSE);
@@ -142,67 +144,16 @@ LRESULT CALLBACK WndProc(HWND hWnd,
 /* -------------------------------------------- */
 /*						関数					*/
 /* -------------------------------------------- */
-/*	初期　セット	*/
 void InitSet(void)
 {
-	// プレイヤー情報初期セット
-	obj[IDX_PLAYER].id = ID_PLAYER;
-	obj[IDX_PLAYER].mode = 1;				// アクション管理番号
-	obj[IDX_PLAYER].dspf = 1;				// ０：非表示	1：表示
-	obj[IDX_PLAYER].xsize = PLAYER_W;		// Ｘサイズ
-	obj[IDX_PLAYER].ysize = PLAYER_H;		// Ｙサイズ
-	obj[IDX_PLAYER].xposition = 170;// X座標
-	//obj[IDX_PLAYER].yposition = 427 - (PLAYER_H / 2); // Y座標
-	// tự tìm block mặt đất gần nhất theo mapdata
-	int px = obj[IDX_PLAYER].xposition / BLOCK_W;
-
-	int groundY = 0;
-	for (int y = 0; y < Y_LINE; y++) {
-		if (mapdata[y][px] >= 1 && mapdata[y][px] <= 4) {
-			groundY = y * BLOCK_H;
-			break;
-		}
-	}
-	// nếu KHÔNG tìm thấy block → đặt player lên dòng cuối cùng của map
-	if (groundY == -1) {
-		groundY = (Y_LINE - 1) * BLOCK_H;
-	}
-	obj[IDX_PLAYER].yposition = groundY - (PLAYER_H / 2);
-
-	obj[IDX_PLAYER].xspeed = 0;			// X移動量
-	obj[IDX_PLAYER].yspeed = 0;			// Y移動量
-
-	obj[IDX_PLAYER].xboff = 0;			// Ｘオフセット
-	obj[IDX_PLAYER].yboff = 0;			// Ｙオフセット
-	obj[IDX_PLAYER].xmoff = 0;			// Ｘマスク
-	obj[IDX_PLAYER].ymoff = PLAYER_H;	// Ｙマスク
-	obj[IDX_PLAYER].actioncnt = 0;
-	obj[IDX_PLAYER].idx = BMP_PLAYER_R;	// 画像番号
-
-	// プレイヤー情報初期セット
-	obj[IDX_ENEMY].id = ID_ENEMY;
-	obj[IDX_ENEMY].mode = 1;				// アクション管理番号
-	obj[IDX_ENEMY].dspf = 1;				// ０：非表示	1：表示
-	obj[IDX_ENEMY].xsize = ENEMY_W;		// Ｘサイズ
-	obj[IDX_ENEMY].ysize = ENEMY_H;		// Ｙサイズ
-	obj[IDX_ENEMY].xposition = 400;// X座標
-	obj[IDX_ENEMY].yposition = 577 - (ENEMY_H / 2); // Y座標
-	obj[IDX_ENEMY].xspeed = 0;			// X移動量
-	obj[IDX_ENEMY].yspeed = 0;			// Y移動量
-
-	obj[IDX_ENEMY].xboff = 0;			// Ｘオフセット
-	obj[IDX_ENEMY].yboff = 0;			// Ｙオフセット
-	obj[IDX_ENEMY].xmoff = 0;			// Ｘマスク
-	obj[IDX_ENEMY].ymoff = ENEMY_H;	// Ｙマスク
-	obj[IDX_ENEMY].actioncnt = 0;
-	obj[IDX_ENEMY].idx = BMP_ENEMY_L;	// 画像番号
-
+	InitPlayer();
+	//InitEnemy();
 	gameCount = 0;
+	enemyCount = 0;
+	killCount = 0;
+	hitCount = 0;
 }
-/* ------------------------------------ */
-/* キー状態チェック */
-/* 0 0 0 0 - 0 0 0 0 */
-/* ------------------------------------ */
+
 void KeyCheck(void) {
 	keystatus = 0;
 	if (GetKeyState(VK_UP) < 0) // 0x01
@@ -217,4 +168,42 @@ void KeyCheck(void) {
 		keystatus |= KEYJUMP;
 	if (GetKeyState(VK_F1) < 0) // 0x20
 		keystatus |= KEYATTACK;
+}
+
+// 土管ワープ(画面端ループ)
+int holeWarp(void)
+{
+	int result = 0;
+
+	// 左側
+	if (pp->xposition + (int)pp->xspeed < 0) {
+		// 上 → 右下
+		pp->xposition = WINDOW_W - 10;
+		if (pp->yposition < BLOCK_H * 4) {
+			// ワープ
+			pp->yposition = WINDOW_H - (BLOCK_H * 3);
+		}
+		// 下 → 右上
+		else if (pp->yposition > WINDOW_H - (BLOCK_H * 4)) {
+			// ワープ
+			pp->yposition = BLOCK_H * 3;
+		}
+		result = 1;
+	}
+	// 右側
+	else if (pp->xposition + (int)pp->xspeed > WINDOW_W) {
+		// 上 → 左下
+		pp->xposition = 0 + 10;
+		if (pp->yposition < BLOCK_H * 4) {
+			// ワープ
+			pp->yposition = WINDOW_H - (BLOCK_H * 3);
+		}
+		// 下 → 左上
+		else if (pp->yposition > WINDOW_H - (BLOCK_H * 4)) {
+			// ワープ
+			pp->yposition = BLOCK_H * 3;
+		}
+		result = 1;
+	}
+	return result;
 }
